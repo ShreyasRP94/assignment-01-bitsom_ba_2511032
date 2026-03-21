@@ -73,3 +73,12 @@ Deleting a single order results in:
 Loss of:
 Sales rep details
 Office location data
+
+
+## Normalization Justification
+
+The argument that a single denormalized table is “simpler” holds only at very small scale; in this dataset it introduces concrete data integrity and maintenance risks. For example, the same `product_id` appears across multiple rows with repeated attributes (`product_name`, `category`, `unit_price`). If the price of a product changes, every occurrence must be updated; missing even one row leads to inconsistent pricing for identical products—an update anomaly. Similarly, customer details (`customer_email`, `customer_city`) are duplicated for each order line. If a customer updates their email, the change must be propagated across all historical rows, increasing the likelihood of stale or conflicting records.
+
+Insert operations are also constrained. A new product cannot be recorded unless it is tied to an `order_id`, `customer_id`, and `sales_rep_id`, which is semantically incorrect and blocks valid business states (e.g., onboarding a product before its first sale). Delete operations are equally problematic: removing the only row containing a given `sales_rep_id` or `office_address` eliminates that master data entirely, even though it should persist independently of orders.
+
+Normalizing to 3NF separates concerns into `customers`, `products`, `sales_reps`, `orders`, and `order_items`. This enforces single sources of truth (e.g., one row per product), eliminates redundancy, and uses foreign keys to maintain referential integrity. The result is not over-engineering; it is a minimal, well-structured design that prevents anomalies, simplifies updates, and scales reliably as data volume and business complexity grow.
