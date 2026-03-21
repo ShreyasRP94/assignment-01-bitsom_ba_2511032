@@ -1,0 +1,100 @@
+// OP1: insertMany() — insert all 3 documents from above prompt
+db.products.insertMany([
+  {
+    _id: "ELEC1001",
+    name: "Samsung 55-inch 4K Smart TV",
+    category: "Electronics",
+    brand: "Samsung",
+    price: 54999.99,
+    currency: "INR",
+    specifications: {
+      screen_size: "55 inches",
+      resolution: "3840x2160",
+      display_type: "LED",
+      smart_tv: true,
+      operating_system: "Tizen",
+      voltage: "220-240V"
+    },
+    warranty: {
+      duration: "2 years",
+      type: "Manufacturer",
+      coverage: ["Parts", "Labor"]
+    },
+    features: ["HDR10+", "Dolby Digital Plus", "Voice Assistant Support"],
+    stock: { available: true, quantity: 25 },
+    ratings: { average: 4.5, reviews_count: 128 }
+  },
+  {
+    _id: "CLOT2001",
+    name: "Men's Slim Fit Cotton Shirt",
+    category: "Clothing",
+    brand: "Allen Solly",
+    price: 1499.00,
+    currency: "INR",
+    attributes: {
+      material: "100% Cotton",
+      fit: "Slim Fit",
+      sleeve_type: "Full Sleeve",
+      pattern: "Solid"
+    },
+    sizes_available: ["S", "M", "L", "XL"],
+    color_variants: [
+      { color: "Blue", sku: "CLOT2001-BLU", stock: 40 },
+      { color: "White", sku: "CLOT2001-WHT", stock: 30 }
+    ],
+    care_instructions: [
+      "Machine wash cold",
+      "Do not bleach",
+      "Iron on low heat"
+    ],
+    ratings: { average: 4.2, reviews_count: 76 }
+  },
+  {
+    _id: "GROC3001",
+    name: "Organic Basmati Rice 5kg",
+    category: "Groceries",
+    brand: "India Gate",
+    price: 899.00,
+    currency: "INR",
+    weight: "5 kg",
+    expiry_date: ISODate("2026-12-31"),
+    packaging: { type: "Plastic Bag", sealed: true },
+    nutritional_info: {
+      serving_size: "100g",
+      calories: 130,
+      macronutrients: {
+        carbohydrates: "28g",
+        protein: "2.5g",
+        fat: "0.3g"
+      }
+    },
+    storage_instructions: [
+      "Store in a cool dry place",
+      "Keep away from moisture"
+    ],
+    stock: { available: true, quantity: 100 },
+    ratings: { average: 4.7, reviews_count: 210 }
+  }
+]);
+
+
+// OP2: find() — retrieve all Electronics products with price > 20000
+db.products.find({
+  category: "Electronics",
+  price: { $gt: 20000 }
+});
+
+// OP3: find() — retrieve all Groceries expiring before 2025-01-01
+db.products.find({
+  category: "Groceries",
+  expiry_date: { $lt: ISODate("2025-01-01") }
+});
+
+// OP4: updateOne() — add a "discount_percent" field to a specific product
+db.products.updateOne(
+  { _id: "ELEC1001" },
+  { $set: { discount_percent: 10 } }
+);
+
+// OP5: createIndex() — create an index on category field and explain why
+db.products.createIndex({ category: 1 });
